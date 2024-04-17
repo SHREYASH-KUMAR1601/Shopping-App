@@ -36,27 +36,41 @@ router.get("/checkout/:id", async (req, res) => {
     if (!user) {
       return res.status(404).send("User not found");
     }
+    console.log(user)
     let totalAmount = user.cart.reduce((sum, curr) => sum + curr.price, 0);
     console.log(user.cart);
-    const session = await stripe.checkout.sessions.create({
-      line_items: [
-        {
-          price_data: {
-            currency: 'inr',
-            product_data: {
-              name: 'T-shirt',
-            },
-            unit_amount: totalAmount * 100,
+    const lineItems = (user.cart).map(function (item){
+      return {
+        price_data: {
+          currency: 'inr',
+          product_data: {
+            name: item.name,
+            images:[item.img]
           },
-          quantity: user.cart.length,
+          unit_amount: item.price * 100,
         },
-      ],
+        quantity: 1,
+      }
+    })
+    const session = await stripe.checkout.sessions.create({
+      line_items: lineItems,//[
+      //   {
+      //     price_data: {
+      //       currency: 'inr',
+      //       product_data: {
+      //         name: 'T-shirt',
+      //         images:["https://images.unsplash.com/photo-1713288971605-92a285c20f56?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw1fHx8ZW58MHx8fHx8"]
+      //       },
+      //       unit_amount: totalAmount * 100,
+      //     },
+      //     quantity: user.cart.length,
+      //   },
+      // ],
       mode: 'payment',
       success_url: 'http://localhost:4242/success',
       cancel_url: 'http://localhost:4242/cancel',
     });
     res.redirect(303,session.url);
-    console.log(session);
     // Send the session ID back to the client
     // res.json({ sessionId: session.id });
   } catch (error) {
