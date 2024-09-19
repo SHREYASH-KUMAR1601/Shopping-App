@@ -77,5 +77,5 @@ app.use(cartRoutes);
 app.use(productApi);
 
 app.listen(process.env.PORT, () => {
-  console.log(`server connected at port : ${process.env.PORT}`);
+  console.log(`Server connected at port : ${process.env.PORT}`);
 });
