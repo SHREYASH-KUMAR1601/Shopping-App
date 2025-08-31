@@ -94,7 +94,10 @@
         <h3 class="card-title text-center"><%= foundProduct.name %></h3>
         <h5 class="card-title text-center">Price: Rs <%= foundProduct.price %></h5>
         <p class="card-text"><%= foundProduct.desc %></p>
-        <a href="#" class="btn btn-success w-100 mb-2">Buy Now</a>
+        <form action="/buy/<%= foundProduct._id %>" method="GET">
+          <button type="submit" class="btn btn-success w-100 mb-2">Buy Now</button>
+        </form>
+
         
         <!-- Add to Cart Button -->
         <form class="d-inline-block" action="/user/<%=foundProduct._id%>/add" method="POST">

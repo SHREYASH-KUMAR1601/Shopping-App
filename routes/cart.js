@@ -27,6 +27,25 @@ router.post("/user/:productId/add", isLoggedIn, async (req, res) => {
   res.redirect("/user/cart");
 });
 
+// remove product from cart
+router.post("/user/:productId/remove", isLoggedIn, async (req, res) => {
+  try {
+    let { productId } = req.params;
+    let userId = req.user._id;
+
+    // Use $pull to remove productId from cart array
+    await User.findByIdAndUpdate(userId, {
+      $pull: { cart: productId }
+    });
+
+    req.flash("success", "Product removed from cart");
+    res.redirect("/user/cart");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error removing product from cart");
+  }
+});
+
 
 router.get("/checkout/:id", async (req, res) => {
   try {
@@ -75,6 +94,42 @@ router.get("/checkout/:id", async (req, res) => {
     // res.json({ sessionId: session.id });
   } catch (error) {
     console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// Direct Buy Now Checkout for a single product
+router.get("/buy/:productId", isLoggedIn, async (req, res) => {
+  try {
+    let { productId } = req.params;
+    let product = await Product.findById(productId);
+
+    if (!product) {
+      return res.status(404).send("Product not found");
+    }
+
+    const session = await stripe.checkout.sessions.create({
+      line_items: [
+        {
+          price_data: {
+            currency: "inr",
+            product_data: {
+              name: product.name,
+              images: [product.img],
+            },
+            unit_amount: product.price * 100, // Stripe expects paise
+          },
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      success_url: "http://localhost:4242/success",
+      cancel_url: "http://localhost:4242/cancel",
+    });
+
+    res.redirect(303, session.url);
+  } catch (err) {
+    console.error(err);
     res.status(500).send("Internal Server Error");
   }
 });
