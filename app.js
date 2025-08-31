@@ -15,6 +15,7 @@ const passport = require("passport"); //pass
 const LocalStrategy = require("passport-local"); //pass
 const User = require("./models/User"); //pass
 const dotenv = require('dotenv').config();
+const Product = require('./models/product')
 mongoose.set("strictQuery", true);
 mongoose
   .connect(process.env.MONGO_URL)
