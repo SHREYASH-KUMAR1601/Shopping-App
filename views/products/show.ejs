@@ -105,7 +105,7 @@
         </form>
 
         <!-- Seller-Specific Buttons -->
-        <% if(currentUser && (currentUser.role === "seller" || currentUser === "admin")){ %>
+        <% if(currentUser && (currentUser.role === "seller" || currentUser.role === "admin")){ %>
         <a href="/products/<%=foundProduct._id%>/edit" class="btn btn-info w-100 mb-2">Edit</a>
         <form class="d-inline-block" action="/products/<%=foundProduct._id%>?_method=DELETE" method="POST">
           <button class="btn btn-danger w-100 mb-2">Delete</button>
