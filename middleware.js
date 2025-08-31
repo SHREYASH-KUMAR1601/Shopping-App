@@ -56,9 +56,6 @@ const isSeller = (req, res, next) => {
   next();
 };
 
-
-const Product = require('../models/product');
-
 const isProductAuthor = async (req, res, next) => {
   let { id } = req.params;
   let product = await Product.findById(id);
