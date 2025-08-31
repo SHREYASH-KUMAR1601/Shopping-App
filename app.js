@@ -33,7 +33,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 
 // seeding dummy data
-seedDB();
+// seedDB();
 
 let configSession = {
   secret: "keyboard cat",
