@@ -39,30 +39,46 @@ const isLoggedIn = (req,res,next)=>{
     next();
 }
 
-const isSeller = (req,res,next)=>{
-    let {id} = req.params;
-    if(!req.user.role){
-        req.flash('error' , 'You donot have the permissions');
-        return res.redirect('/products')
-    }
-    else if(req.user.role !== "seller"){
-        req.flash('error' , 'You donot have the permissions');
-        return res.redirect(`/products/${id}`)
-    }
-    next();
-}
+const isSeller = (req, res, next) => {
+  let { id } = req.params;
 
-const isProductAuthor = async(req,res,next)=>{
-    let {id} = req.params;
-    let product = await Product.findById(id);
-    console.log(product.author , 'author'); //objectid
-    console.log(req.user , 'user'); //objectid
-    if(!product.author.equals(req.user._id)){
-        req.flash('error' , 'You are not the owner of this product');
-        return res.redirect(`/products/${id}`)
-    }
-    next();
-}
+  if (!req.user.role) {
+    req.flash('error', 'You do not have the permissions');
+    return res.redirect('/products');
+  }
+
+  // Allow either seller or admin
+  if (req.user.role !== 'seller' && req.user.role !== 'admin') {
+    req.flash('error', 'You do not have the permissions');
+    return res.redirect(`/products/${id}`);
+  }
+
+  next();
+};
+
+
+const Product = require('../models/product');
+
+const isProductAuthor = async (req, res, next) => {
+  let { id } = req.params;
+  let product = await Product.findById(id);
+
+  if (!product) {
+    req.flash('error', 'Product not found');
+    return res.redirect('/products');
+  }
+
+  // Check if the logged-in user is either the author OR an admin
+  if (product.author.equals(req.user._id) || req.user.role === 'admin') {
+    return next();
+  }
+
+  req.flash('error', 'You are not authorized to perform this action');
+  res.redirect(`/products/${id}`);
+};
+
+module.exports = { isProductAuthor };
+
 
 
 module.exports = {validateProduct ,validateReview , isLoggedIn , isSeller , isProductAuthor } ;

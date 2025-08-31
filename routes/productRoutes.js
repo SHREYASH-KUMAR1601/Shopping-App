@@ -18,7 +18,7 @@ router.get('/products' , async(req,res)=>{
 })
 
 
-// adding a fomr for  anew product
+// adding a form for a new product
 router.get('/products/new' , isLoggedIn ,isSeller , (req,res)=>{
     try{
         res.render('products/new');
@@ -42,7 +42,7 @@ router.post('/products' ,isLoggedIn , isSeller ,  validateProduct , async (req,r
     }
 })
 
-// route for shwoing the deatails of thre products
+// route for shwoing the deatails of the products
 router.get('/products/:id' , isLoggedIn , async(req,res)=>{
     try{
 
