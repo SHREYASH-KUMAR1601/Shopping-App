@@ -35,7 +35,7 @@ const products = [
   },
   {
     name: "Apple Watch Series 9",
-    img: "https://unsplash.com/photos/black-smart-watch-with-white-background-O43D6CYzxqM", // Example: generic smartwatch
+    img: "https://images.unsplash.com/photo-1624096104992-9b4fa3a279dd", // Example: generic smartwatch
     price: 45000,
     desc: "Apple Watch Series 9 with brighter display, advanced health sensors, crash detection, and double-tap gesture control."
   },
