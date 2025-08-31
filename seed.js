@@ -1,5 +1,25 @@
 const mongoose = require('mongoose');
 const Product = require('./models/product');
+const User = require('./models/User');
+
+async function seedAdmin() {
+    // Check if admin already exists
+    let admin = await User.findOne({ role: "admin" });
+    if (!admin) {
+        admin = new User({
+            username: "admin",
+            email: "admin@gmail.com",
+            gender: "Other",
+            role: "admin"
+        });
+        await User.register(admin, "admin@1601");
+        console.log("Admin created successfully!");
+    } else {
+        console.log("Admin already exists.");
+    }
+    return admin;
+}
+
 const products = [
   {
     name: "iPhone 15 Pro",
@@ -15,7 +35,7 @@ const products = [
   },
   {
     name: "Apple Watch Series 9",
-    img: "https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b", // Example: generic smartwatch
+    img: "https://unsplash.com/photos/black-smart-watch-with-white-background-O43D6CYzxqM", // Example: generic smartwatch
     price: 45000,
     desc: "Apple Watch Series 9 with brighter display, advanced health sensors, crash detection, and double-tap gesture control."
   },
@@ -32,13 +52,12 @@ const products = [
     desc: "AirPods Pro (2nd generation) with Active Noise Cancellation, Adaptive Transparency, Personalized Spatial Audio, and MagSafe Charging Case."
   }
 ];
-async function seedDB() {
-  try {
-    await Product.deleteMany({});
-    await Product.insertMany(products);
-    console.log("Data seeded successfully with Apple products 🚀");
-  } catch (err) {
-    console.error("Error seeding database:", err);
-  }
+
+async function seedDB(){
+    const admin = await seedAdmin(); // ensures admin exists
+    const productsWithAuthor = products.map(p => ({ ...p, author: admin._id }));
+    await Product.insertMany(productsWithAuthor);
+    console.log("Products seeded successfully with admin as author!");
 }
+
 module.exports = seedDB;

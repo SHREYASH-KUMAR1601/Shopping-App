@@ -33,7 +33,19 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 
 // seeding dummy data
-// seedDB();
+(async function checkAndSeed() {
+  try {
+    const count = await Product.countDocuments();
+    if (count === 0) {
+      console.log("No products found, seeding database...");
+      await seedDB();
+    } else {
+      console.log("Products already exist. Skipping seeding.");
+    }
+  } catch (err) {
+    console.error("Error checking product count:", err);
+  }
+})();
 
 let configSession = {
   secret: "keyboard cat",
